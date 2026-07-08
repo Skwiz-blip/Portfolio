@@ -1,7 +1,5 @@
-import type { FormEvent } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
-import profilePhoto from '../IMG-20240605-WA0051.jpg'
 
 type Profile = {
   name: string
@@ -10,23 +8,22 @@ type Profile = {
   email: string
 }
 
-type Kpi = {
-  label: string
-  value: string
-}
-
 type Project = {
   title: string
   description: string
   tags: string[]
-  progress: number
-  details: string
-  highlights: string[]
+  link?: string
 }
 
-type Skills = {
-  languages: string[]
-  tools: string[]
+type SkillGroup = {
+  category: string
+  skills: { name: string; level: number }[]
+}
+
+type Service = {
+  icon: string
+  title: string
+  description: string
 }
 
 const profile: Profile = {
@@ -36,328 +33,140 @@ const profile: Profile = {
   email: 'okoumassoukodjo@gmail.com',
 }
 
-const kpis: Kpi[] = [ 
-  { label: 'Lignes de données analysées', value: '426k+' },
-  { label: 'Flutter • Python • TensorFlow', value: '' },
-]
-
 const projects: Project[] = [
   {
-    title: 'Analyse & prédiction prix véhicules',
-    description:
-      'Exploration, feature engineering et modèle de régression sur 426k enregistrements.',
-    tags: ['Regression', 'Pandas', 'Scikit-learn'],
-    progress: 95,
-    details:
-      "Projet de data science complet : exploration, nettoyage, feature engineering et entraînement de modèles de régression pour estimer le prix de véhicules sur un dataset volumineux.",
-    highlights: [
-      'Préparation et analyse exploratoire sur un dataset à grande échelle',
-      'Feature engineering et comparaison de modèles de régression',
-      'Métriques, validation et itérations pour améliorer la performance',
-    ],
-  },
-  {
-    title: 'Cliver (en cours)',
-    description:
-      'Application Flutter client–livreur — authentification, géolocalisation, messagerie.',
+    title: 'Cliver',
+    description: 'Application Flutter client–livreur — authentification, géolocalisation, messagerie.',
     tags: ['Flutter', 'Realtime', 'Supabase'],
-    progress: 70,
-    details:
-      "Application mobile en cours de développement orientée logistique : comptes utilisateurs, suivi en temps réel et échanges client–livreur. Conçue avec une architecture modulable pour évoluer vers une app production.",
-    highlights: [
-      'Authentification et gestion de profils',
-      'Géolocalisation et suivi temps réel',
-      'Messagerie et notifications (prévu)',
+    link: 'https://yocliver.com',
+  },
+  {
+    title: 'ERP/CRM Live Y Dream',
+    description: 'Mise en place d\'un système ERP/CRM durant le stage — React et Node.js.',
+    tags: ['React', 'Node.js', 'ERP/CRM'],
+  },
+  {
+    title: 'Analyse & prédiction prix véhicules',
+    description: 'Exploration, feature engineering et modèle de régression sur 426k enregistrements.',
+    tags: ['Regression', 'Pandas', 'Scikit-learn'],
+  },
+]
+
+const skillGroups: SkillGroup[] = [
+  {
+    category: 'Langages',
+    skills: [
+      { name: 'Python', level: 90 },
+      { name: 'Dart', level: 85 },
+      { name: 'Java', level: 70 },
+      { name: 'HTML/CSS', level: 80 },
+      { name: 'SQL', level: 82 },
     ],
   },
   {
-    title: "Détection d'anomalies",
-    description: 'Pipeline de détection d’outliers sur données de transactions.',
-    tags: ['Anomaly Detection', 'IsolationForest'],
-    progress: 60,
-    details:
-      "Mise en place d'un pipeline de détection d'anomalies afin d’identifier des transactions atypiques. Travail centré sur la préparation des données, la modélisation et l’interprétation des résultats.",
-    highlights: [
-      'Pré-traitements et normalisation des données',
-      'Modèles d’outlier detection (Isolation Forest)',
-      'Analyse et interprétation des anomalies détectées',
+    category: 'Outils & Frameworks',
+    skills: [
+      { name: 'Flutter', level: 85 },
+      { name: 'Git', level: 85 },
+      { name: 'TensorFlow', level: 75 },
+      { name: 'Scikit-learn', level: 80 },
+      { name: 'VS Code', level: 88 },
+    ],
+  },
+  {
+    category: 'Big Data',
+    skills: [
+      { name: 'Hadoop', level: 65 },
+      { name: 'Spark', level: 70 },
+      { name: 'Kafka', level: 60 },
+    ],
+  },
+  {
+    category: 'Bases de données',
+    skills: [
+      { name: 'PostgreSQL', level: 78 },
+      { name: 'Firebase', level: 76 },
+      { name: 'Supabase', level: 80 },
     ],
   },
 ]
 
-const skills: Skills & { databases: string[] } = {
-  languages: ['Python', 'Dart', 'Java', 'HTML', 'CSS', 'SQL'],
-  tools: ['Git', 'Supabase', 'Firebase', 'PostgreSQL', 'VS Code'],
-  databases: ['PostgreSQL', 'Firebase', 'Supabase'],
-}
-
-const aboutTags = ['Intelligence Artificielle', 'Mobile', 'Big Data', 'Backend']
-
-const navSections = [
-  { id: 'about', label: 'À propos' },
-  { id: 'projects', label: 'Projets' },
-  { id: 'skills', label: 'Compétences' },
-  { id: 'contact', label: 'Contact' },
+const services: Service[] = [
+  {
+    icon: '',
+    title: 'Intelligence Artificielle',
+    description: 'Développement de modèles ML, analyse de données et solutions d\'IA pour vos projets.',
+  },
+  {
+    icon: '',
+    title: 'Développement Mobile',
+    description: 'Applications Flutter natives performantes avec backend temps réel.',
+  },
+  {
+    icon: '',
+    title: 'Data Science',
+    description: 'Exploration, visualisation et analyse de données complexes.',
+  },
+  {
+    icon: '',
+    title: 'Backend & APIs',
+    description: 'Architecture backend robuste avec Supabase et bases de données modernes.',
+  },
 ]
-
-const cvDownloadHref = '/cv.pdf'
-
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)+/g, '')
-}
-
-function useInView<T extends HTMLElement>(options?: IntersectionObserverInit) {
-  const ref = useRef<T | null>(null)
-  const [inView, setInView] = useState(false)
-
-  useEffect(() => {
-    const element = ref.current
-    if (!element) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setInView(true)
-            observer.unobserve(entry.target)
-          }
-        })
-      },
-      { threshold: 0.2, ...options },
-    )
-
-    observer.observe(element)
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [options])
-
-  return { ref, inView }
-}
-
-function scrollToSection(id: string) {
-  const el = document.getElementById(id)
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
-}
 
 function App() {
-  const [drawerOpen, setDrawerOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-  const [activeProject, setActiveProject] = useState<Project | null>(null)
-  const [isDark, setIsDark] = useState(false)
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 })
+  const [isHovering, setIsHovering] = useState(false)
+  const [isDarkBg, setIsDarkBg] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 8)
-    }
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+    const handleMouseMove = (e: MouseEvent) => {
+      setCursorPos({ x: e.clientX, y: e.clientY })
 
-  useEffect(() => {
-    const syncFromHash = () => {
-      const hash = window.location.hash
-      if (!hash.startsWith('#project/')) return
-      const slug = hash.replace('#project/', '')
-      const match = projects.find((p) => slugify(p.title) === slug)
-      if (match) setActiveProject(match)
+      const target = e.target as HTMLElement
+      const isInteractive = target.tagName === 'A' || target.tagName === 'BUTTON' || target.closest('a') || target.closest('button')
+      setIsHovering(isInteractive || false)
+
+      const hero = document.getElementById('hero')
+      if (hero) {
+        const rect = hero.getBoundingClientRect()
+        setIsDarkBg(e.clientY <= rect.bottom)
+      }
     }
 
-    syncFromHash()
-    window.addEventListener('hashchange', syncFromHash)
-    return () => window.removeEventListener('hashchange', syncFromHash)
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
   }, [])
-
-  useEffect(() => {
-    const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
-    const stored = window.localStorage.getItem('theme')
-    if (stored === 'dark') setIsDark(true)
-    else if (stored === 'light') setIsDark(false)
-    else setIsDark(prefersDark)
-  }, [])
-
-  useEffect(() => {
-    const root = document.documentElement
-    if (isDark) root.classList.add('dark')
-    else root.classList.remove('dark')
-
-    window.localStorage.setItem('theme', isDark ? 'dark' : 'light')
-  }, [isDark])
-
-  const handleNav = (id: string) => {
-    if (activeProject) {
-      setActiveProject(null)
-      window.location.hash = ''
-      setTimeout(() => scrollToSection(id), 0)
-      setDrawerOpen(false)
-      return
-    }
-    scrollToSection(id)
-    setDrawerOpen(false)
-  }
-
-  const openProject = (project: Project) => {
-    setActiveProject(project)
-    window.location.hash = `project/${slugify(project.title)}`
-    setDrawerOpen(false)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  const closeProject = () => {
-    setActiveProject(null)
-    window.location.hash = ''
-  }
-
-  const toggleTheme = () => {
-    setIsDark((prev) => !prev)
-  }
 
   return (
-    <div className="app-shell">
-      <header className={`app-bar app-bar-elevation ${scrolled ? 'is-scrolled' : ''}`}>
-        <div className="app-bar-surface">
-          <div className="app-logo">
-            <span className="app-logo-primary">OKOUMASSOU Kodjo K.</span>
-            <span className="app-logo-secondary">IA & Big Data · Dev mobile</span>
-          </div>
+    <div className={`app-shell ${isHovering ? 'cursor-hover' : ''} ${isDarkBg ? 'cursor-dark' : ''}`}>
+      <div id="cursor" style={{ transform: `translate(${cursorPos.x}px, ${cursorPos.y}px)` }} />
+      <div id="cursor-ring" style={{ transform: `translate(${cursorPos.x}px, ${cursorPos.y}px)` }} />
 
-          <nav className="app-nav" aria-label="Navigation principale">
-            <div className="app-nav-links">
-              {navSections.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  className="app-nav-link"
-                  onClick={() => handleNav(item.id)}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="app-nav-cta app-nav-cta-desktop">
-              <button
-                type="button"
-                className="icon-button theme-toggle"
-                onClick={toggleTheme}
-                aria-label={isDark ? 'Passer en thème clair' : 'Passer en thème sombre'}
-              >
-                <span className="material-symbols-outlined">
-                  {isDark ? 'light_mode' : 'dark_mode'}
-                </span>
-              </button>
-              <a
-                href={cvDownloadHref}
-                className="btn btn-outlined btn-icon-leading"
-                download
-              >
-                <span className="material-symbols-outlined">download</span>
-                <span>Télécharger CV</span>
-              </a>
-            </div>
-
-            <button
-              type="button"
-              className="app-nav-menu-toggle"
-              aria-label="Ouvrir le menu"
-              onClick={() => setDrawerOpen(true)}
-            >
-              <span className="material-symbols-outlined">menu</span>
-            </button>
-          </nav>
-        </div>
-      </header>
-
-      {drawerOpen && (
-        <div
-          className="nav-drawer-overlay"
-          onClick={() => setDrawerOpen(false)}
-        >
-          <div
-            className="nav-drawer-panel"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="nav-drawer-header">
-              <span className="nav-drawer-title">Navigation</span>
-              <button
-                type="button"
-                className="nav-drawer-close"
-                aria-label="Fermer le menu"
-                onClick={() => setDrawerOpen(false)}
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-            <div className="nav-drawer-links">
-              {navSections.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  className="nav-drawer-link"
-                  onClick={() => handleNav(item.id)}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="nav-drawer-footer">
-              <button
-                type="button"
-                className="btn btn-outlined btn-icon-leading nav-theme-toggle"
-                onClick={toggleTheme}
-              >
-                <span className="material-symbols-outlined">
-                  {isDark ? 'light_mode' : 'dark_mode'}
-                </span>
-                <span>{isDark ? 'Thème clair' : 'Thème sombre'}</span>
-              </button>
-              <a
-                href={cvDownloadHref}
-                className="btn btn-outlined btn-icon-leading"
-                download
-              >
-                <span className="material-symbols-outlined">download</span>
-                <span>Télécharger CV</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
+      <nav>
+        <a href="#hero" className="nav-logo">Hello word</a>
+        <ul className="nav-links">
+          <li><a href="#about">À propos</a></li>
+          <li><a href="#work">Projets</a></li>
+          <li><a href="#skills">Compétences</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
 
       <main className="app-main">
-        {activeProject ? (
-          <ProjectDetails project={activeProject} onBack={closeProject} />
-        ) : (
-          <>
-            <Hero />
-            <About />
-            <Projects onOpenProject={openProject} />
-            <SkillsSection />
-            <Contact />
-          </>
-        )}
+        <Hero />
+        <About />
+        <Work />
+        <Skills />
+        <Services />
+        <Contact />
       </main>
 
-      <footer className="app-footer">
-        <div className="app-footer-inner">
-          <div className="app-footer-meta">
-            <div>  OKOUMASSOU Kodjo Katchékpèlè</div>
-            <div>Portfolio IA & Big Data · Développement mobile</div>
-          </div>
-          <div className="app-footer-links">
-            <span className="material-symbols-outlined">gavel</span>
-            <span className="material-symbols-outlined">shield_lock</span>
-          </div>
+      <footer>
+        <div className="footer-content">
+          <div className="footer-logo">Skwiz.</div>
+          <p className="footer-text">© 2026 — IA & Big Data · Développement mobile</p>
         </div>
       </footer>
     </div>
@@ -365,69 +174,22 @@ function App() {
 }
 
 function Hero() {
-  const { ref, inView } = useInView<HTMLDivElement>()
-
   return (
-    <section
-      id="hero"
-      ref={ref}
-      className={`app-section fade-in-up ${inView ? 'is-visible' : ''}`}
-      aria-labelledby="hero-title"
-    >
-      <div className="hero">
-        <div>
-          <h1 id="hero-title" className="hero-heading">
-            Développeur / Étudiant{' '}
-            <span className="hero-title-highlight">IA &amp; Big Data</span>
-          </h1>
-          <p className="hero-subtitle">
-            {profile.title}. Passionné par les modèles de prédiction, les pipelines
-            de données et les applications mobiles Flutter connectées à des
-            backends temps réel.
-          </p>
-
-          <div className="hero-kpis">
-            {kpis.map((item) => (
-              <div
-                key={item.label}
-                className={`chip ${item.value ? 'chip-primary' : 'chip-soft'}`}
-              >
-                <span className="chip-label-strong">{item.label}</span>
-                {item.value && <span>{item.value}</span>}
-              </div>
-            ))}
-          </div>
-
-          <div className="hero-actions">
-            <button
-              type="button"
-              className="btn btn-primary btn-icon-leading"
-              onClick={() => scrollToSection('projects')}
-            >
-              <span className="material-symbols-outlined">visibility</span>
-              <span>Voir mes projets</span>
-            </button>
-            <button
-              type="button"
-              className="btn btn-outlined btn-icon-leading"
-              onClick={() => scrollToSection('contact')}
-            >
-              <span className="material-symbols-outlined">mail</span>
-              <span>Me contacter</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="hero-avatar-wrapper">
-          <figure className="hero-avatar-card hero-photo-card">
-            <div className="hero-photo">
-              <img src={profilePhoto} alt={profile.name} />
-            </div>
-            <figcaption className="hero-photo-caption">
-              <div className="hero-photo-name">{profile.name}</div>
-              <div className="hero-avatar-caption">IA · Mobile · Données</div>
-            </figcaption>
-          </figure>
+    <section id="hero">
+      <p className="hero-eyebrow">Portfolio 2026</p>
+      <h1 className="hero-name">
+        <span className="hero-name-line">OKOUMASSOU</span>
+        <span className="hero-name-line">Kodjo K.</span>
+      </h1>
+      <div className="hero-number">01</div>
+      <div className="hero-sub">
+        <p className="hero-sub-text">
+          Étudiant en L3 Intelligence Artificielle & Big Data, CEO de Cliver. Passionné par le développement mobile,
+          les modèles de prédiction et les pipelines de données.
+        </p>
+        <div className="hero-scroll">
+          <span>Scroll</span>
+          <div className="scroll-line" />
         </div>
       </div>
     </section>
@@ -435,411 +197,175 @@ function Hero() {
 }
 
 function About() {
-  const { ref, inView } = useInView<HTMLDivElement>()
-
   return (
-    <section
-      id="about"
-      ref={ref}
-      className={`app-section fade-in-up ${inView ? 'is-visible' : ''}`}
-      aria-labelledby="about-title"
-    >
-      <div className="app-section-header">
-        <h2 id="about-title" className="app-section-title">
-          À propos
+    <section id="about">
+      <div>
+        <p className="about-label">À propos</p>
+        <h2 className="about-headline">
+          Développeur<em>.</em><br />
+          Étudiant IA<em>.</em>
         </h2>
-      </div>
-      <div className="about-content">
-        <p> 
-          Développeur en début de carrière, actuellement en L3 Intelligence
-          Artificielle. Motivé et rigoureux, j’aime concevoir des applications
-          utiles, explorer de nouvelles technologies et renforcer continuellement
-          mes compétences. À l’aise en équipe comme en autonomie, je recherche un
-          environnement où progresser tout en apportant une réelle valeur.
+        <p className="about-text">
+          Développeur en début de carrière, actuellement en L3 Intelligence Artificielle.
+          Motivé et rigoureux, j'aime concevoir des applications utiles, explorer de nouvelles
+          technologies et renforcer continuellement mes compétences. À l'aise en équipe comme
+          en autonomie, je recherche un environnement où progresser tout en apportant une
+          réelle valeur.
         </p>
-        <div className="about-chips">
-          {aboutTags.map((tag) => (
-            <span key={tag} className="chip chip-soft">
-              {tag}
-            </span>
-          ))}
+        <div className="about-stats">
+          <div>
+            <div className="stat-number">6+</div>
+            <div className="stat-label">Projets réalisés</div>
+          </div>
+          <div>
+            <div className="stat-number">L3</div>
+            <div className="stat-label">Niveau d'études</div>
+          </div>
         </div>
       </div>
     </section>
   )
 }
 
-function Projects({
-  onOpenProject,
-}: {
-  onOpenProject: (project: Project) => void
-}) {
-  const { ref, inView } = useInView<HTMLDivElement>()
-
+function Work() {
   return (
-    <section
-      id="projects"
-      ref={ref}
-      className={`app-section fade-in-up ${inView ? 'is-visible' : ''}`}
-      aria-labelledby="projects-title"
-    >
-      <div className="app-section-header">
-        <div>
-          <h2 id="projects-title" className="app-section-title">
-            Projets
-          </h2>
-          <p className="app-section-subtitle">
-            IA appliquée, applications mobiles et pipelines de données.
-          </p>
-        </div>
+    <section id="work">
+      <div className="section-header">
+        <h2 className="section-title">Projets</h2>
+        <span className="section-count">03</span>
       </div>
       <div className="projects-grid">
-        {projects.map((project) => (
-          <article key={project.title} className="project-card">
-            <div className="project-thumb" aria-hidden="true">
-              <div className="project-thumb-inner">
-                <div className="project-thumb-chart">
-                  <div className="project-thumb-chart-bar" />
-                  <div className="project-thumb-chart-bar" />
-                  <div className="project-thumb-chart-bar" />
-                  <div className="project-thumb-chart-bar" />
-                  <div className="project-thumb-chart-bar" />
-                </div>
-                <div className="project-thumb-ui">
-                  <div className="project-thumb-pill" />
-                  <div className="project-thumb-pill" />
-                  <div className="project-thumb-pill" />
-                </div>
+        {projects.map((project, index) => (
+          <a key={project.title} href={project.link || '#'} className="project-item" target={project.link ? '_blank' : undefined} rel={project.link ? 'noreferrer' : undefined}>
+            <span className="project-num">{String(index + 1).padStart(2, '0')}</span>
+            <div className="project-info">
+              <h3 className="project-name">{project.title}</h3>
+              <div className="project-tags">
+                {project.tags.map((tag) => (
+                  <span key={tag} className="project-tag">{tag}</span>
+                ))}
               </div>
             </div>
-            <div>
-              <h3 className="project-title">{project.title}</h3>
-              <p className="project-description">{project.description}</p>
-            </div>
-            <div className="project-tags">
-              {project.tags.map((tag) => (
-                <span key={tag} className="chip chip-soft">
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <div className="project-meta">
-              <div className="project-progress-track" aria-hidden="true">
-                <div
-                  className="project-progress-fill"
-                  style={{ width: inView ? `${project.progress}%` : 0 }}
-                />
-              </div>
-              <div className="project-progress-label">
-                {project.progress}%
-              </div>
-            </div>
-            <div className="project-footer">
-              <button
-                type="button"
-                className="btn btn-outlined btn-icon-leading"
-                onClick={() => onOpenProject(project)}
-              >
-                <span className="material-symbols-outlined">open_in_new</span>
-                <span>Détails</span>
-              </button>
-            </div>
-          </article>
+            <span className="project-arrow">→</span>
+          </a>
         ))}
       </div>
     </section>
   )
 }
 
-function ProjectDetails({
-  project,
-  onBack,
-}: {
-  project: Project
-  onBack: () => void
-}) {
-  const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.12 })
+function Skills() {
+  const [visible, setVisible] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisible(true)
+        }
+      },
+      { threshold: 0.3 }
+    )
+    if (sectionRef.current) observer.observe(sectionRef.current)
+    return () => observer.disconnect()
+  }, [])
 
   return (
-    <section
-      id="project-details"
-      ref={ref}
-      className={`app-section fade-in-up ${inView ? 'is-visible' : ''}`}
-      aria-labelledby="project-details-title"
-    >
-      <div className="project-details-header">
-        <button
-          type="button"
-          className="btn btn-outlined btn-icon-leading"
-          onClick={onBack}
-        >
-          <span className="material-symbols-outlined">arrow_back</span>
-          <span>Retour</span>
-        </button>
-      </div>
-
-      <div className="project-details-hero">
-        <div className="project-details-titleblock">
-          <h2 id="project-details-title" className="project-details-title">
-            {project.title}
-          </h2>
-          <p className="project-details-description">{project.details}</p>
-          <div className="project-details-tags">
-            {project.tags.map((tag) => (
-              <span key={tag} className="chip chip-soft">
-                {tag}
-              </span>
+    <section id="skills" ref={sectionRef} className={visible ? 'is-visible' : ''}>
+      <div className="skills-container">
+        {skillGroups.map((group) => (
+          <div key={group.category} className="skill-group">
+            <h3>{group.category}</h3>
+            {group.skills.map((skill) => (
+              <div key={skill.name} className="skill-item">
+                <div className="skill-header">
+                  <span className="skill-name">{skill.name}</span>
+                  <span className="skill-percent">{skill.level}%</span>
+                </div>
+                <div className="skill-bar">
+                  <div
+                    className="skill-fill"
+                    style={{ width: visible ? `${skill.level}%` : '0%' }}
+                  />
+                </div>
+              </div>
             ))}
           </div>
-        </div>
-
-        <aside className="project-details-aside">
-          <div className="project-details-progress">
-            <div className="project-details-progress-label">
-              Avancement
-              <span>{project.progress}%</span>
-            </div>
-            <div className="project-progress-track" aria-hidden="true">
-              <div className="project-progress-fill" style={{ width: `${project.progress}%` }} />
-            </div>
-          </div>
-
-          <div className="project-details-card">
-            <h3 className="project-details-card-title">Points clés</h3>
-            <ul className="project-details-list">
-              {project.highlights.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        </aside>
+        ))}
       </div>
     </section>
   )
 }
 
-function SkillsSection() {
-  const { ref, inView } = useInView<HTMLDivElement>()
-
-  const languageLevels: Record<string, number> = {
-    Python: 90,
-    Dart: 85,
-    Java: 70,
-    HTML: 80,
-    CSS: 78,
-    SQL: 82,
-  }
-
-  const toolLevels: Record<string, number> = {
-    Git: 85,
-    Supabase: 80,
-    Firebase: 78,
-    PostgreSQL: 75,
-    'VS Code': 88,
-  }
-
-  const dbLevels: Record<string, number> = {
-    PostgreSQL: 78,
-    Firebase: 76,
-    Supabase: 80,
-  }
-
-  const skillBarWidth = (name: string, map: Record<string, number>) =>
-    inView ? `${map[name] ?? 70}%` : '0%'
-
+function Services() {
   return (
-    <section
-      id="skills"
-      ref={ref}
-      className={`app-section fade-in-up ${inView ? 'is-visible' : ''}`}
-      aria-labelledby="skills-title"
-    >
-      <div className="app-section-header">
-        <div>
-          <h2 id="skills-title" className="app-section-title">
-            Compétences techniques
-          </h2>
-          <p className="app-section-subtitle">
-            Langages, outils et bases de données utilisés au quotidien.
-          </p>
-        </div>
-      </div>
-      <div className="skills-grid">
-        <div className="skill-column">
-          <div className="skill-column-header">
-            <span className="material-symbols-outlined">code</span>
-            <span className="skill-column-title">Langages</span>
+    <section id="services">
+      <div className="services-grid">
+        {services.map((service) => (
+          <div key={service.title} className="service-card">
+            <h3 className="service-title">{service.title}</h3>
+            <p className="service-desc">{service.description}</p>
           </div>
-          {skills.languages.map((lang) => (
-            <div key={lang} className="skill-row">
-              <span className="skill-row-label">{lang}</span>
-              <div className="skill-progress-track" aria-hidden="true">
-                <div
-                  className="skill-progress-fill"
-                  style={{ width: skillBarWidth(lang, languageLevels) }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="skill-column">
-          <div className="skill-column-header">
-            <span className="material-symbols-outlined">build</span>
-            <span className="skill-column-title">Outils</span>
-          </div>
-          {skills.tools.map((tool) => (
-            <div key={tool} className="skill-row">
-              <span className="skill-row-label">{tool}</span>
-              <div className="skill-progress-track" aria-hidden="true">
-                <div
-                  className="skill-progress-fill"
-                  style={{ width: skillBarWidth(tool, toolLevels) }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="skill-column">
-          <div className="skill-column-header">
-            <span className="material-symbols-outlined">database</span>
-            <span className="skill-column-title">Bases de données</span>
-          </div>
-          {skills.databases.map((db) => (
-            <div key={db} className="skill-row">
-              <span className="skill-row-label">{db}</span>
-              <div className="skill-progress-track" aria-hidden="true">
-                <div
-                  className="skill-progress-fill"
-                  style={{ width: skillBarWidth(db, dbLevels) }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+        ))}
       </div>
     </section>
   )
 }
 
 function Contact() {
-  const { ref, inView } = useInView<HTMLDivElement>()
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
-    const form = event.currentTarget
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const form = e.currentTarget as HTMLFormElement
     const data = new FormData(form)
-    const name = String(data.get('name') ?? '').trim()
-    const email = String(data.get('email') ?? '').trim()
-    const message = String(data.get('message') ?? '').trim()
+    const name = data.get('name')
+    const email = data.get('email')
+    const message = data.get('message')
 
-    const subject = `Nouveau message depuis le portfolio${name ? ` - ${name}` : ''}`
-    const body = [
-      name ? `Nom: ${name}` : null,
-      email ? `Email: ${email}` : null,
-      '',
-      message,
-    ]
-      .filter(Boolean)
-      .join('\n')
-
-    const mailto = `mailto:${encodeURIComponent(profile.email)}?subject=${encodeURIComponent(
-      subject,
-    )}&body=${encodeURIComponent(body)}`
-
-    window.location.href = mailto
+    const subject = `Contact depuis portfolio - ${name}`
+    const body = `Nom: ${name}\nEmail: ${email}\n\n${message}`
+    window.location.href = `mailto:${profile.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
   }
 
   return (
-    <section
-      id="contact"
-      ref={ref}
-      className={`app-section fade-in-up ${inView ? 'is-visible' : ''}`}
-      aria-labelledby="contact-title"
-    >
-      <div className="app-section-header">
-        <div>
-          <h2 id="contact-title" className="app-section-title">
-            Contact
-          </h2>
-          <p className="app-section-subtitle">
-            Discutons de vos besoins en IA, données ou applications mobiles.
-          </p>
-        </div>
-      </div>
-      <div className="contact-grid">
+    <section id="contact">
+      <div className="contact-layout">
         <div className="contact-info">
-          <div className="contact-line">
-            <strong>Email :</strong> {profile.email}
-          </div>
-          <div className="contact-line">
-            <strong>Téléphone :</strong> {profile.phone}
-          </div>
-          <div className="contact-links">
-            <a
-              href="https://github.com/Skwiz-blip"
-              target="_blank"
-              rel="noreferrer"
-              className="btn btn-outlined btn-icon-leading"
-            >
-              <span className="material-symbols-outlined">code</span>
-              <span>GitHub</span>
-            </a>  
+          <h2>Travaillons ensemble</h2>
+          <p className="contact-text">
+            Vous avez un projet en IA, une idée d'application mobile ou des données à analyser ?
+            N'hésitez pas à me contacter pour en discuter.
+          </p>
+          <div className="contact-details">
+            <div className="contact-item">
+              <span className="contact-item-icon"></span>
+              <span>{profile.email}</span>
+            </div>
+            <div className="contact-item">
+              <span className="contact-item-icon"></span>
+              <span>{profile.phone}</span>
+            </div>
+            <div className="contact-item">
+              <span className="contact-item-icon"></span>
+              <a href="https://github.com/Skwiz-blip" target="_blank" rel="noreferrer">github.com/Skwiz-blip</a>
+            </div>
           </div>
         </div>
-
-        <div className="contact-form-card">
-          <form onSubmit={handleSubmit} noValidate>
-            <div className="form-grid">
-              <div className="form-field">
-                <label htmlFor="name" className="form-label">
-                  Nom complet
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  className="form-input"
-                  placeholder="Votre nom"
-                />
-              </div>
-              <div className="form-field">
-                <label htmlFor="email" className="form-label">
-                  Email
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  className="form-input"
-                  placeholder="vous@example.com"
-                />
-              </div>
-              <div className="form-field" style={{ gridColumn: '1 / -1' }}>
-                <label htmlFor="message" className="form-label">
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  className="form-textarea"
-                  placeholder="Parlez-moi de votre projet, de vos données ou de votre besoin en IA."
-                />
-              </div>
-            </div>
-            <div className="form-footer">
-              <button
-                type="submit"
-                className="btn btn-primary btn-icon-leading"
-              >
-                <span className="material-symbols-outlined">send</span>
-                <span>Envoyer un message</span>
-              </button>
-            </div>
-          </form>
-        </div>
+        <form className="contact-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label">Nom</label>
+            <input name="name" type="text" className="form-input" placeholder="Votre nom" required />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Email</label>
+            <input name="email" type="email" className="form-input" placeholder="vous@example.com" required />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Message</label>
+            <textarea name="message" className="form-textarea" placeholder="Parlez-moi de votre projet..." required />
+          </div>
+          <button type="submit" className="form-submit">Envoyer</button>
+        </form>
       </div>
     </section>
   )
