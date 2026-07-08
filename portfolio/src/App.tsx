@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import GitHubCalendar from 'react-github-calendar'
 import './App.css'
 
 type Profile = {
@@ -115,34 +116,8 @@ const services: Service[] = [
 ]
 
 function App() {
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 })
-  const [isHovering, setIsHovering] = useState(false)
-  const [isDarkBg, setIsDarkBg] = useState(false)
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setCursorPos({ x: e.clientX, y: e.clientY })
-
-      const target = e.target as HTMLElement
-      const isInteractive = target.tagName === 'A' || target.tagName === 'BUTTON' || target.closest('a') || target.closest('button')
-      setIsHovering(isInteractive || false)
-
-      const hero = document.getElementById('hero')
-      if (hero) {
-        const rect = hero.getBoundingClientRect()
-        setIsDarkBg(e.clientY <= rect.bottom)
-      }
-    }
-
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
-  }, [])
-
   return (
-    <div className={`app-shell ${isHovering ? 'cursor-hover' : ''} ${isDarkBg ? 'cursor-dark' : ''}`}>
-      <div id="cursor" style={{ transform: `translate(${cursorPos.x}px, ${cursorPos.y}px)` }} />
-      <div id="cursor-ring" style={{ transform: `translate(${cursorPos.x}px, ${cursorPos.y}px)` }} />
-
+    <div className="app-shell">
       <nav>
         <a href="#hero" className="nav-logo">Hello word</a>
         <ul className="nav-links">
@@ -199,29 +174,42 @@ function Hero() {
 function About() {
   return (
     <section id="about">
-      <div>
-        <p className="about-label">À propos</p>
-        <h2 className="about-headline">
-          Développeur<em>.</em><br />
-          Étudiant IA<em>.</em>
-        </h2>
-        <p className="about-text">
-          Développeur en début de carrière, actuellement en L3 Intelligence Artificielle.
-          Motivé et rigoureux, j'aime concevoir des applications utiles, explorer de nouvelles
-          technologies et renforcer continuellement mes compétences. À l'aise en équipe comme
-          en autonomie, je recherche un environnement où progresser tout en apportant une
-          réelle valeur.
-        </p>
-        <div className="about-stats">
-          <div>
-            <div className="stat-number">6+</div>
-            <div className="stat-label">Projets réalisés</div>
-          </div>
-          <div>
-            <div className="stat-number">L3</div>
-            <div className="stat-label">Niveau d'études</div>
+      <div className="about-content">
+        <div className="about-text-content">
+          <p className="about-label">À propos</p>
+          <h2 className="about-headline">
+            Développeur<em>.</em><br />
+            Étudiant IA<em>.</em>
+          </h2>
+          <p className="about-text">
+            Développeur en début de carrière, actuellement en L3 Intelligence Artificielle.
+            Motivé et rigoureux, j'aime concevoir des applications utiles, explorer de nouvelles
+            technologies et renforcer continuellement mes compétences. À l'aise en équipe comme
+            en autonomie, je recherche un environnement où progresser tout en apportant une
+            réelle valeur.
+          </p>
+          <div className="about-stats">
+            <div>
+              <div className="stat-number">6+</div>
+              <div className="stat-label">Projets réalisés</div>
+            </div>
+            <div>
+              <div className="stat-number">L3</div>
+              <div className="stat-label">Niveau d'études</div>
+            </div>
           </div>
         </div>
+        <div className="about-image">
+          <img
+            src="https://github.com/Skwiz-blip.png"
+            alt="OKOUMASSOU Kodjo K."
+            className="profile-photo"
+          />
+        </div>
+      </div>
+      <div className="github-calendar-section">
+        <h3 className="github-calendar-title">Activité GitHub</h3>
+        <GitHubCalendar username="skwiz-blip" />
       </div>
     </section>
   )
@@ -301,13 +289,18 @@ function Skills() {
 function Services() {
   return (
     <section id="services">
-      <div className="services-grid">
-        {services.map((service) => (
-          <div key={service.title} className="service-card">
-            <h3 className="service-title">{service.title}</h3>
-            <p className="service-desc">{service.description}</p>
-          </div>
-        ))}
+      <div className="inner">
+        <p className="section-label">04 — Services</p>
+        <h2 className="services-title">Ce que je peux faire pour vous.</h2>
+        <div className="services-list">
+          {services.map((service, index) => (
+            <div key={service.title} className="service">
+              <div className="service-num">{String(index + 1).padStart(2, '0')}</div>
+              <div className="service-name">{service.title}</div>
+              <div className="service-desc">{service.description}</div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )
@@ -348,6 +341,10 @@ function Contact() {
             <div className="contact-item">
               <span className="contact-item-icon"></span>
               <a href="https://github.com/Skwiz-blip" target="_blank" rel="noreferrer">github.com/Skwiz-blip</a>
+            </div>
+            <div className="contact-item">
+              <span className="contact-item-icon"></span>
+              <a href="https://www.linkedin.com/in/louis-okoumassou-33a751367" target="_blank" rel="noreferrer">linkedin.com/in/louis-okoumassou-33a751367</a>
             </div>
           </div>
         </div>
