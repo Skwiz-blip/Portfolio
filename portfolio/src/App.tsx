@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import GitHubCalendar from 'react-github-calendar'
+import { GitHubCalendar } from 'react-github-calendar'
+import profilePhoto from './IMG-20240605-WA0051.jpg'
 import './App.css'
 
 type Profile = {
@@ -42,14 +43,14 @@ const projects: Project[] = [
     link: 'https://yocliver.com',
   },
   {
-    title: 'ERP/CRM Live Y Dream',
+    title: 'ERP/CRM',
     description: 'Mise en place d\'un système ERP/CRM durant le stage — React et Node.js.',
     tags: ['React', 'Node.js', 'ERP/CRM'],
   },
   {
-    title: 'Analyse & prédiction prix véhicules',
-    description: 'Exploration, feature engineering et modèle de régression sur 426k enregistrements.',
-    tags: ['Regression', 'Pandas', 'Scikit-learn'],
+    title: 'Kira Assistances Personnel (en cours)',
+    description: 'Application d\'assistance personnelle avec IA — développement en cours.',
+    tags: ['IA', 'Python', 'En cours'],
   },
 ]
 
@@ -201,7 +202,7 @@ function About() {
         </div>
         <div className="about-image">
           <img
-            src="https://github.com/Skwiz-blip.png"
+            src={profilePhoto}
             alt="OKOUMASSOU Kodjo K."
             className="profile-photo"
           />
