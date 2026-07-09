@@ -59,10 +59,10 @@ const skillGroups: SkillGroup[] = [
     category: 'Langages',
     skills: [
       { name: 'Python', level: 90 },
-      { name: 'Dart', level: 85 },
-      { name: 'Java', level: 70 },
+      { name: 'Dart', level: 80 },
+      { name: 'React', level: 50 },
       { name: 'HTML/CSS', level: 80 },
-      { name: 'SQL', level: 82 },
+      { name: 'SQL', level: 80 },
     ],
   },
   {
@@ -72,23 +72,23 @@ const skillGroups: SkillGroup[] = [
       { name: 'Git', level: 85 },
       { name: 'TensorFlow', level: 75 },
       { name: 'Scikit-learn', level: 80 },
-      { name: 'VS Code', level: 88 },
+      { name: 'VS Code', level: 100 },
     ],
   },
   {
     category: 'Big Data',
     skills: [
-      { name: 'Hadoop', level: 65 },
-      { name: 'Spark', level: 70 },
-      { name: 'Kafka', level: 60 },
+      { name: 'Hadoop', level: 50 },
+      { name: 'Spark', level: 50 },
+      { name: 'Kafka', level: 50 },
     ],
   },
   {
     category: 'Bases de données',
     skills: [
-      { name: 'PostgreSQL', level: 78 },
-      { name: 'Firebase', level: 76 },
-      { name: 'Supabase', level: 80 },
+      { name: 'PostgreSQL', level: 50 },
+      { name: 'Firebase', level: 50 },
+      { name: 'Supabase', level: 50 },
     ],
   },
 ]
@@ -160,7 +160,7 @@ function Hero() {
       <div className="hero-number">01</div>
       <div className="hero-sub">
         <p className="hero-sub-text">
-          Étudiant en L3 Intelligence Artificielle & Big Data, CEO de Cliver. Passionné par le développement mobile,
+          Étudiant en L3 Intelligence Artificielle & Big Data, CEO de Cliver. Passionné par l'Intelligence Artificielle,
           les modèles de prédiction et les pipelines de données.
         </p>
         <div className="hero-scroll">
