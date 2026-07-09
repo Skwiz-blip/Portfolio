@@ -37,7 +37,7 @@ const profile: Profile = {
 
 const projects: Project[] = [
   {
-    title: 'Cliver',
+    title: 'Cliver (founder & CEO',
     description: 'Application Flutter client–livreur — authentification, géolocalisation, messagerie.',
     tags: ['Flutter', 'Realtime', 'Supabase'],
     link: 'https://yocliver.com',
@@ -160,7 +160,7 @@ function Hero() {
       <div className="hero-number">01</div>
       <div className="hero-sub">
         <p className="hero-sub-text">
-          Étudiant en L3 Intelligence Artificielle & Big Data, CEO de Cliver. Passionné par l'Intelligence Artificielle,
+          Étudiant en L3 Intelligence Artificielle & Big Data, fondateur et CEO de Cliver. Passionné par l'Intelligence Artificielle,
           les modèles de prédiction et les pipelines de données.
         </p>
         <div className="hero-scroll">
