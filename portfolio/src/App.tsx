@@ -3,23 +3,18 @@ import { GitHubCalendar } from 'react-github-calendar'
 import profilePhoto from './IMG-20240605-WA0051.jpg'
 import './App.css'
 
-type Profile = {
-  name: string
-  title: string
-  phone: string
-  email: string
-}
+/* ── Données ──────────────────────────────────────────────── */
 
-type Project = {
+type Case = {
   title: string
   description: string
-  tags: string[]
+  meta: { key: string; value: string }[]
   link?: string
 }
 
-type SkillGroup = {
+type IndexColumn = {
   category: string
-  skills: { name: string; level: number }[]
+  items: { name: string; level: number }[]
 }
 
 type Service = {
@@ -28,56 +23,92 @@ type Service = {
   description: string
 }
 
-const profile: Profile = {
+const profile = {
   name: 'OKOUMASSOU Kodjo Katchékpèlè',
   title: 'Étudiant Licence 3 — IA & Big Data | Développement mobile',
   phone: '+228 79 46 19 31',
   email: 'okoumassoukodjo@gmail.com',
+  github: 'https://github.com/Skwiz-blip',
+  githubUser: 'Skwiz-blip',
+  linkedin: 'https://www.linkedin.com/in/louis-okoumassou-33a751367',
+  cv: '/CV-OKOUMASSOU-Kodjo.pdf',
 }
 
-const projects: Project[] = [
+const specs = [
+  { key: 'Niveau', value: 'Licence 3' },
+  { key: 'Spécialité', value: 'IA & Big Data' },
+  { key: 'Mobile', value: 'Flutter · Dart' },
+  { key: 'Fondateur', value: 'Cliver' },
+]
+
+const figures = [
+  { num: '6', sup: '+', label: 'Projets réalisés' },
+  { num: 'L3', sup: '', label: "Niveau d'études" },
+  { num: '01', sup: '', label: 'Startup fondée' },
+  { num: '510', sup: '', label: 'Contributions 2025' },
+]
+
+const cases: Case[] = [
   {
-    title: 'Cliver (founder & CEO',
-    description: 'Application Flutter client–livreur — authentification, géolocalisation, messagerie.',
-    tags: ['Flutter', 'Realtime', 'Supabase'],
+    title: 'Cliver',
+    description:
+      'Application Flutter reliant clients et livreurs : authentification, géolocalisation temps réel et messagerie intégrée.',
+    meta: [
+      { key: 'Rôle', value: 'Fondateur & CEO' },
+      { key: 'Stack', value: 'Flutter · Supabase' },
+      { key: 'Temps réel', value: 'Géoloc · Chat' },
+      { key: 'Statut', value: 'En ligne' },
+    ],
     link: 'https://yocliver.com',
   },
   {
-    title: 'ERP/CRM',
-    description: 'Mise en place d\'un système ERP/CRM durant le stage — React et Node.js.',
-    tags: ['React', 'Node.js', 'ERP/CRM'],
+    title: 'ERP / CRM',
+    description:
+      "Système de gestion interne mis en place durant mon stage : suivi des flux, gestion client et tableaux de bord.",
+    meta: [
+      { key: 'Rôle', value: 'Développeur' },
+      { key: 'Stack', value: 'React · Node.js' },
+      { key: 'Contexte', value: 'Stage' },
+      { key: 'Statut', value: 'Livré' },
+    ],
   },
   {
-    title: 'Kira Assistances Personnel (en cours)',
-    description: 'Application d\'assistance personnelle avec IA — développement en cours.',
-    tags: ['IA', 'Python', 'En cours'],
+    title: 'Kira Assistances',
+    description:
+      "Assistant personnel propulsé par l'IA : compréhension du langage naturel et automatisation des tâches du quotidien.",
+    meta: [
+      { key: 'Rôle', value: 'Conception & dev' },
+      { key: 'Stack', value: 'Python · NLP' },
+      { key: 'Domaine', value: 'Assistant IA' },
+      { key: 'Statut', value: 'En cours' },
+    ],
   },
 ]
 
-const skillGroups: SkillGroup[] = [
+const indexColumns: IndexColumn[] = [
   {
     category: 'Langages',
-    skills: [
+    items: [
       { name: 'Python', level: 90 },
       { name: 'Dart', level: 80 },
-      { name: 'React', level: 50 },
-      { name: 'HTML/CSS', level: 80 },
       { name: 'SQL', level: 80 },
+      { name: 'HTML / CSS', level: 80 },
+      { name: 'React', level: 50 },
     ],
   },
   {
     category: 'Outils & Frameworks',
-    skills: [
+    items: [
+      { name: 'VS Code', level: 100 },
       { name: 'Flutter', level: 85 },
       { name: 'Git', level: 85 },
-      { name: 'TensorFlow', level: 75 },
       { name: 'Scikit-learn', level: 80 },
-      { name: 'VS Code', level: 100 },
+      { name: 'TensorFlow', level: 75 },
     ],
   },
   {
     category: 'Big Data',
-    skills: [
+    items: [
       { name: 'Hadoop', level: 50 },
       { name: 'Spark', level: 50 },
       { name: 'Kafka', level: 50 },
@@ -85,7 +116,7 @@ const skillGroups: SkillGroup[] = [
   },
   {
     category: 'Bases de données',
-    skills: [
+    items: [
       { name: 'PostgreSQL', level: 50 },
       { name: 'Firebase', level: 50 },
       { name: 'Supabase', level: 50 },
@@ -95,277 +126,532 @@ const skillGroups: SkillGroup[] = [
 
 const services: Service[] = [
   {
-    icon: '',
+    icon: 'neurology',
     title: 'Intelligence Artificielle',
-    description: 'Développement de modèles ML, analyse de données et solutions d\'IA pour vos projets.',
+    description: "Modèles de prédiction, analyse de données et solutions d'IA appliquées à vos projets.",
   },
   {
-    icon: '',
+    icon: 'smartphone',
     title: 'Développement Mobile',
-    description: 'Applications Flutter natives performantes avec backend temps réel.',
+    description: 'Applications Flutter natives et performantes, avec backend temps réel.',
   },
   {
-    icon: '',
+    icon: 'monitoring',
     title: 'Data Science',
-    description: 'Exploration, visualisation et analyse de données complexes.',
+    description: 'Exploration, visualisation et analyse de jeux de données complexes.',
   },
   {
-    icon: '',
+    icon: 'database',
     title: 'Backend & APIs',
     description: 'Architecture backend robuste avec Supabase et bases de données modernes.',
   },
 ]
 
+/* ── Outils ───────────────────────────────────────────────── */
+
+/** Révèle un bloc à son entrée dans le viewport, une seule fois. */
+function useReveal<T extends HTMLElement>(threshold = 0.12) {
+  const ref = useRef<T>(null)
+  const [shown, setShown] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true)
+          observer.disconnect()
+        }
+      },
+      { threshold, rootMargin: '0px 0px -6% 0px' }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [threshold])
+
+  return { ref, cls: `reveal${shown ? ' is-in' : ''}` }
+}
+
+const sections = [
+  { id: 'open', label: 'ouverture' },
+  { id: 'intro', label: 'intro' },
+  { id: 'work', label: 'projets' },
+  { id: 'stack', label: 'stack' },
+  { id: 'services', label: 'services' },
+  { id: 'contact', label: 'contact' },
+]
+
+const pad2 = (n: number) => String(n).padStart(2, '0')
+
+/** Marqueur de section : pastille pleine + libellé. */
+function Marker({ n, label, accent }: { n: string; label: string; accent?: boolean }) {
+  return (
+    <p className="marker">
+      <span className={`marker-chip${accent ? ' is-accent' : ''}`}>{n}</span>
+      / {label}
+    </p>
+  )
+}
+
+/* ── Application ──────────────────────────────────────────── */
+
 function App() {
   return (
-    <div className="app-shell">
-      <nav>
-        <a href="#hero" className="nav-logo">Hello word</a>
-        <ul className="nav-links">
-          <li><a href="#about">À propos</a></li>
-          <li><a href="#work">Projets</a></li>
-          <li><a href="#skills">Compétences</a></li>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
+    <div className="shell">
+      <div className="atmos" aria-hidden="true">
+        <div className="blob blob-a" />
+        <div className="blob blob-b" />
+        <div className="blob blob-c" />
+        <div className="blob blob-d" />
+      </div>
+      <div className="grain" aria-hidden="true" />
+      <Nav />
+      <Pager />
 
-      <main className="app-main">
-        <Hero />
-        <About />
+      <main className="main">
+        <Open />
+        <SpecBar />
+        <Statement />
+        <Figures />
         <Work />
-        <Skills />
+        <Index />
         <Services />
         <Contact />
       </main>
 
-      <footer>
-        <div className="footer-content">
-          <div className="footer-logo">Skwiz.</div>
-          <p className="footer-text">© 2026 — IA & Big Data · Développement mobile</p>
-        </div>
-      </footer>
+      <Foot />
     </div>
   )
 }
 
-function Hero() {
+/** La nav s'assombrit en quittant la bande claire d'ouverture. */
+function Nav() {
+  const [onLight, setOnLight] = useState(true)
+  const [stuck, setStuck] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => {
+      const open = document.getElementById('open')
+      const limit = open ? open.offsetHeight - 70 : window.innerHeight
+      setOnLight(window.scrollY < limit)
+      setStuck(window.scrollY > 40)
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [])
+
   return (
-    <section id="hero">
-      <p className="hero-eyebrow">Portfolio 2026</p>
-      <h1 className="hero-name">
-        <span className="hero-name-line">OKOUMASSOU</span>
-        <span className="hero-name-line">Kodjo K.</span>
-      </h1>
-      <div className="hero-number">01</div>
-      <div className="hero-sub">
-        <p className="hero-sub-text">
-          Étudiant en L3 Intelligence Artificielle & Big Data, fondateur et CEO de Cliver. Passionné par l'Intelligence Artificielle,
-          les modèles de prédiction et les pipelines de données.
-        </p>
-        <div className="hero-scroll">
-          <span>Scroll</span>
-          <div className="scroll-line" />
-        </div>
-      </div>
-    </section>
+    <nav className={`nav${onLight ? ' on-light' : ''}${stuck && !onLight ? ' is-stuck' : ''}`}>
+      <a href="#open" className="nav-logo">
+        <span className="dot" />
+        <span>Skwiz</span>
+      </a>
+      <ul className="nav-links">
+        <li><a href="#work">projets</a></li>
+        <li><a href="#stack">stack</a></li>
+        <li><a href="#services">services</a></li>
+        <li><a href="#contact">contact</a></li>
+      </ul>
+    </nav>
   )
 }
 
-function About() {
-  return (
-    <section id="about">
-      <div className="about-content">
-        <div className="about-text-content">
-          <p className="about-label">À propos</p>
-          <h2 className="about-headline">
-            Développeur<em>.</em><br />
-            Étudiant IA<em>.</em>
-          </h2>
-          <p className="about-text">
-            Développeur en début de carrière, actuellement en L3 Intelligence Artificielle.
-            Motivé et rigoureux, j'aime concevoir des applications utiles, explorer de nouvelles
-            technologies et renforcer continuellement mes compétences. À l'aise en équipe comme
-            en autonomie, je recherche un environnement où progresser tout en apportant une
-            réelle valeur.
-          </p>
-          <div className="about-stats">
-            <div>
-              <div className="stat-number">6+</div>
-              <div className="stat-label">Projets réalisés</div>
-            </div>
-            <div>
-              <div className="stat-number">L3</div>
-              <div className="stat-label">Niveau d'études</div>
-            </div>
-          </div>
-        </div>
-        <div className="about-image">
-          <img
-            src={profilePhoto}
-            alt="OKOUMASSOU Kodjo K."
-            className="profile-photo"
-          />
-        </div>
-      </div>
-      <div className="github-calendar-section">
-        <h3 className="github-calendar-title">Activité GitHub</h3>
-        <GitHubCalendar username="skwiz-blip" />
-      </div>
-    </section>
-  )
-}
-
-function Work() {
-  return (
-    <section id="work">
-      <div className="section-header">
-        <h2 className="section-title">Projets</h2>
-        <span className="section-count">03</span>
-      </div>
-      <div className="projects-grid">
-        {projects.map((project, index) => (
-          <a key={project.title} href={project.link || '#'} className="project-item" target={project.link ? '_blank' : undefined} rel={project.link ? 'noreferrer' : undefined}>
-            <span className="project-num">{String(index + 1).padStart(2, '0')}</span>
-            <div className="project-info">
-              <h3 className="project-name">{project.title}</h3>
-              <div className="project-tags">
-                {project.tags.map((tag) => (
-                  <span key={tag} className="project-tag">{tag}</span>
-                ))}
-              </div>
-            </div>
-            <span className="project-arrow">→</span>
-          </a>
-        ))}
-      </div>
-    </section>
-  )
-}
-
-function Skills() {
-  const [visible, setVisible] = useState(false)
-  const sectionRef = useRef<HTMLElement>(null)
+/** Points de progression : suit la section visible. */
+function Pager() {
+  const [active, setActive] = useState('open')
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
-          setVisible(true)
-        }
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+        if (visible) setActive(visible.target.id)
       },
-      { threshold: 0.3 }
+      { rootMargin: '-45% 0px -45% 0px', threshold: [0, 0.25, 0.5, 1] }
     )
-    if (sectionRef.current) observer.observe(sectionRef.current)
+    sections.forEach(({ id }) => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
     return () => observer.disconnect()
   }, [])
 
   return (
-    <section id="skills" ref={sectionRef} className={visible ? 'is-visible' : ''}>
-      <div className="skills-container">
-        {skillGroups.map((group) => (
-          <div key={group.category} className="skill-group">
-            <h3>{group.category}</h3>
-            {group.skills.map((skill) => (
-              <div key={skill.name} className="skill-item">
-                <div className="skill-header">
-                  <span className="skill-name">{skill.name}</span>
-                  <span className="skill-percent">{skill.level}%</span>
-                </div>
-                <div className="skill-bar">
-                  <div
-                    className="skill-fill"
-                    style={{ width: visible ? `${skill.level}%` : '0%' }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    </section>
+    <nav className={`pager${active === 'open' ? ' on-light' : ''}`} aria-label="Sections">
+      {sections.map((section) => (
+        <a
+          key={section.id}
+          href={`#${section.id}`}
+          className={active === section.id ? 'is-active' : undefined}
+          aria-current={active === section.id ? 'true' : undefined}
+        >
+          <span>{section.label}</span>
+          <i aria-hidden="true" />
+        </a>
+      ))}
+    </nav>
   )
 }
 
-function Services() {
+/* ── 01 · Ouverture ───────────────────────────────────────── */
+
+function Open() {
   return (
-    <section id="services">
-      <div className="inner">
-        <p className="section-label">04 — Services</p>
-        <h2 className="services-title">Ce que je peux faire pour vous.</h2>
-        <div className="services-list">
-          {services.map((service, index) => (
-            <div key={service.title} className="service">
-              <div className="service-num">{String(index + 1).padStart(2, '0')}</div>
-              <div className="service-name">{service.title}</div>
-              <div className="service-desc">{service.description}</div>
-            </div>
-          ))}
+    <section className="open" id="open">
+      <span className="ghost open-ghost" aria-hidden="true">portfolio</span>
+
+      <div className="open-photo">
+        <img src={profilePhoto} alt="Portrait d'OKOUMASSOU Kodjo K." />
+      </div>
+
+      <div className="open-inner">
+        <p className="open-eyebrow">Kodjo Katchékpèlè</p>
+        <h1 className="open-name">
+          <span>Okoumassou<em className="dot">.</em></span>
+        </h1>
+
+        <div className="open-foot">
+          <div className="open-social">
+            <a href={profile.github} target="_blank" rel="noreferrer">↳ GitHub</a>
+            <a href={profile.linkedin} target="_blank" rel="noreferrer">↳ LinkedIn</a>
+            <a href={`mailto:${profile.email}`}>↳ Email</a>
+          </div>
+          <p className="open-role">
+            <span>Étudiant IA &amp; Big Data</span>
+            <span>Développeur Flutter</span>
+          </p>
         </div>
       </div>
     </section>
   )
 }
 
+/* ── 02 · Barre de specs ──────────────────────────────────── */
+
+function SpecBar() {
+  return (
+    <div className="specs">
+      {specs.map((spec) => (
+        <div className="spec" key={spec.key}>
+          <span className="spec-key">{spec.key}</span>
+          <span className="spec-val">{spec.value}</span>
+        </div>
+      ))}
+      <a className="spec-cta" href={profile.cv} download>
+        Télécharger le CV <span aria-hidden="true">↓</span>
+      </a>
+    </div>
+  )
+}
+
+/* ── 03 · Déclaration ─────────────────────────────────────── */
+
+function Statement() {
+  const { ref, cls } = useReveal<HTMLDivElement>()
+
+  return (
+    <section className="band band-pad" id="intro">
+      <div className={cls} ref={ref}>
+        <Marker n="01" label="intro" />
+        <div className="tagged">
+          <p className="tagged-label">Ce que je cherche à faire</p>
+          <h2 className="intro-statement">
+            Je construis des <em>modèles qui prédisent</em> et des{' '}
+            <em>applications qu'on utilise vraiment</em>.
+          </h2>
+        </div>
+        <span className="rule" aria-hidden="true" />
+
+        <div className="intro-foot">
+          <p className="intro-note">
+            Développeur en début de carrière, en Licence 3 Intelligence Artificielle &amp;
+            Big Data. Motivé et rigoureux, j'aime concevoir des applications utiles, explorer
+            de nouvelles technologies et renforcer continuellement mes compétences. À l'aise
+            en équipe comme en autonomie.
+          </p>
+          <a href="#work" className="btn btn-line">
+            Voir les projets <span className="arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ── 04 · Chiffres ────────────────────────────────────────── */
+
+function Figures() {
+  return (
+    <div className="figures">
+      {figures.map((figure) => (
+        <div className="figure" key={figure.label}>
+          <div className="figure-num">
+            {figure.num}
+            {figure.sup && <sup>{figure.sup}</sup>}
+          </div>
+          <div className="figure-label">{figure.label}</div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/* ── 05 · Projets ─────────────────────────────────────────── */
+
+function Work() {
+  return (
+    <section className="band" id="work">
+      <div className="band-pad" style={{ paddingBottom: 0 }}>
+        <Marker n="02" label="projets" />
+      </div>
+      {cases.map((item, i) => (
+        <CaseRow key={item.title} item={item} index={i} />
+      ))}
+    </section>
+  )
+}
+
+function CaseRow({ item, index }: { item: Case; index: number }) {
+  const { ref, cls } = useReveal<HTMLDivElement>()
+  const Tag = item.link ? 'a' : 'div'
+
+  return (
+    <Tag
+      className={`case ${cls}`}
+      ref={ref as never}
+      {...(item.link ? { href: item.link, target: '_blank', rel: 'noreferrer' } : {})}
+    >
+      <div className="case-num" aria-hidden="true">{pad2(index + 1)}</div>
+
+      <div>
+        <h3 className="case-name">
+          {item.title}<span className="dot">.</span>
+        </h3>
+        <p className="case-desc">{item.description}</p>
+        <span className={`case-go${item.link ? '' : ' is-idle'}`}>
+          {item.link ? 'Visiter le site' : 'Étude de cas à venir'}
+          <span aria-hidden="true">{item.link ? '↗' : '···'}</span>
+        </span>
+      </div>
+
+      <ul className="case-meta">
+        {item.meta.map((row, i) => (
+          <li key={row.key}>
+            <span className="case-meta-idx">{pad2(i + 1)}</span>
+            <span className="case-meta-key">{row.key}</span>
+            <span className="case-meta-val">{row.value}</span>
+          </li>
+        ))}
+      </ul>
+    </Tag>
+  )
+}
+
+/* ── 06 · Index technique ─────────────────────────────────── */
+
+function Index() {
+  const { ref, cls } = useReveal<HTMLDivElement>()
+
+  return (
+    <section className="band" id="stack">
+      <div className="band-pad" style={{ paddingBottom: 0 }}>
+        <span className="ghost stack-ghost" aria-hidden="true">stack</span>
+        <Marker n="03" label="stack" />
+      </div>
+
+      <div className={`index ${cls}`} ref={ref}>
+        {indexColumns.map((column) => (
+          <div className="index-col" key={column.category}>
+            <h3>{column.category}</h3>
+            <ul>
+              {column.items.map((item) => (
+                <li key={item.name}>
+                  {item.name}
+                  <Dots level={item.level} name={item.name} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      <div className="stack-note">
+        <p className="microtext">
+          Niveaux évalués sur cinq paliers — usage courant, projets personnels et
+          travaux académiques. Le détail par projet figure dans la section précédente.
+        </p>
+      </div>
+
+      <GitHubActivity />
+    </section>
+  )
+}
+
+/** Niveau rendu en 5 points plutôt qu'en barre de progression. */
+function Dots({ level, name }: { level: number; name: string }) {
+  const filled = Math.round(level / 20)
+  return (
+    <span className="dots" role="img" aria-label={`${name} : ${level} %`}>
+      {Array.from({ length: 5 }, (_, i) => (
+        <i key={i} className={i < filled ? 'on' : undefined} />
+      ))}
+    </span>
+  )
+}
+
+function GitHubActivity() {
+  return (
+    <div className="gh">
+      <div className="gh-head">
+        <Marker n="03b" label="activité github" />
+        <a className="gh-link" href={profile.github} target="_blank" rel="noreferrer">
+          @{profile.githubUser} ↗
+        </a>
+      </div>
+      <GitHubCalendar
+        username={profile.githubUser}
+        colorScheme="dark"
+        theme={{
+          light: ['#ececea', '#ffd0b3', '#ff9a5c', '#ff5a00', '#b83d00'],
+          dark: ['#1a1a1a', '#4a1c00', '#8a3200', '#d94a00', '#ff7a2e'],
+        }}
+        blockSize={16}
+        blockMargin={5}
+        fontSize={12}
+        labels={{
+          totalCount: '{{count}} contributions en {{year}}',
+          legend: { less: 'Moins', more: 'Plus' },
+          months: [
+            'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin',
+            'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc',
+          ],
+          weekdays: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+        }}
+      />
+    </div>
+  )
+}
+
+/* ── 07 · Services ────────────────────────────────────────── */
+
+function Services() {
+  return (
+    <section className="band" id="services">
+      <div className="band-pad" style={{ paddingBottom: 0 }}>
+        <Marker n="04" label="services" />
+      </div>
+      {services.map((service, i) => (
+        <article className="svc-row" key={service.title}>
+          <span className="svc-num">{pad2(i + 1)}</span>
+          <h3 className="svc-name">{service.title}</h3>
+          <p className="svc-desc">{service.description}</p>
+          <span className="material-symbols-outlined svc-icon" aria-hidden="true">
+            {service.icon}
+          </span>
+        </article>
+      ))}
+    </section>
+  )
+}
+
+/* ── 08 · Contact ─────────────────────────────────────────── */
+
 function Contact() {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const form = e.currentTarget as HTMLFormElement
-    const data = new FormData(form)
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
     const name = data.get('name')
     const email = data.get('email')
     const message = data.get('message')
 
-    const subject = `Contact depuis portfolio - ${name}`
-    const body = `Nom: ${name}\nEmail: ${email}\n\n${message}`
-    window.location.href = `mailto:${profile.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+    const subject = `Contact depuis le portfolio — ${name}`
+    const body = `Nom : ${name}\nEmail : ${email}\n\n${message}`
+    window.location.href = `mailto:${profile.email}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`
   }
 
   return (
-    <section id="contact">
-      <div className="contact-layout">
-        <div className="contact-info">
-          <h2>Travaillons ensemble</h2>
-          <p className="contact-text">
-            Vous avez un projet en IA, une idée d'application mobile ou des données à analyser ?
-            N'hésitez pas à me contacter pour en discuter.
-          </p>
-          <div className="contact-details">
-            <div className="contact-item">
-              <span className="contact-item-icon"></span>
-              <span>{profile.email}</span>
-            </div>
-            <div className="contact-item">
-              <span className="contact-item-icon"></span>
-              <span>{profile.phone}</span>
-            </div>
-            <div className="contact-item">
-              <span className="contact-item-icon"></span>
-              <a href="https://github.com/Skwiz-blip" target="_blank" rel="noreferrer">github.com/Skwiz-blip</a>
-            </div>
-            <div className="contact-item">
-              <span className="contact-item-icon"></span>
-              <a href="https://www.linkedin.com/in/louis-okoumassou-33a751367" target="_blank" rel="noreferrer">linkedin.com/in/louis-okoumassou-33a751367</a>
-            </div>
+    <section className="contact" id="contact">
+      <div className="contact-left">
+        <Marker n="05" label="contact" />
+        <h2 className="contact-title">
+          Travaillons<br />ensemble<span className="dot">.</span>
+        </h2>
+
+        <form className="form" onSubmit={handleSubmit}>
+          <div className="field">
+            <label htmlFor="name">Nom</label>
+            <input id="name" name="name" type="text" placeholder="Votre nom" required />
           </div>
-        </div>
-        <form className="contact-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">Nom</label>
-            <input name="name" type="text" className="form-input" placeholder="Votre nom" required />
+          <div className="field">
+            <label htmlFor="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="vous@exemple.com" required />
           </div>
-          <div className="form-group">
-            <label className="form-label">Email</label>
-            <input name="email" type="email" className="form-input" placeholder="vous@example.com" required />
+          <div className="field">
+            <label htmlFor="message">Message</label>
+            <textarea id="message" name="message" placeholder="Parlez-moi de votre projet…" required />
           </div>
-          <div className="form-group">
-            <label className="form-label">Message</label>
-            <textarea name="message" className="form-textarea" placeholder="Parlez-moi de votre projet..." required />
-          </div>
-          <button type="submit" className="form-submit">Envoyer</button>
+          <button type="submit" className="btn btn-solid">
+            Envoyer <span className="arrow" aria-hidden="true">↗</span>
+          </button>
         </form>
       </div>
+
+      <div className="contact-right">
+        <div>
+          <Marker n="→" label="disponible" accent />
+          <p className="contact-claim">
+            Un projet en IA, une application mobile ou des données à analyser ?
+          </p>
+        </div>
+
+        <div className="contact-list">
+          <a className="contact-row" href={`mailto:${profile.email}`}>
+            <span className="material-symbols-outlined" aria-hidden="true">mail</span>
+            {profile.email}
+          </a>
+          <a className="contact-row" href={`tel:${profile.phone.replace(/\s/g, '')}`}>
+            <span className="material-symbols-outlined" aria-hidden="true">call</span>
+            {profile.phone}
+          </a>
+          <a className="contact-row" href={profile.github} target="_blank" rel="noreferrer">
+            <span className="material-symbols-outlined" aria-hidden="true">code</span>
+            github.com/{profile.githubUser}
+          </a>
+          <a className="contact-row" href={profile.linkedin} target="_blank" rel="noreferrer">
+            <span className="material-symbols-outlined" aria-hidden="true">link</span>
+            LinkedIn
+          </a>
+        </div>
+      </div>
     </section>
+  )
+}
+
+/* ── Pied de page ─────────────────────────────────────────── */
+
+function Foot() {
+  return (
+    <footer className="foot">
+      <div className="foot-word">okoumassou<span className="dot">.</span></div>
+      <div className="foot-bar">
+        <span>© 2026 {profile.name}</span>
+        <ul className="foot-links">
+          <li><a href={profile.github} target="_blank" rel="noreferrer">GitHub</a></li>
+          <li><a href={profile.linkedin} target="_blank" rel="noreferrer">LinkedIn</a></li>
+          <li><a href={`mailto:${profile.email}`}>Email</a></li>
+        </ul>
+        <span>{profile.title}</span>
+      </div>
+    </footer>
   )
 }
 
