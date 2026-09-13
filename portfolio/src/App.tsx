@@ -7,8 +7,12 @@ import './App.css'
 
 type Case = {
   title: string
+  role: string
+  status: string
   description: string
-  meta: { key: string; value: string }[]
+  points?: string[]
+  tags: string[]
+  tone: 'dark' | 'light'
   link?: string
 }
 
@@ -51,37 +55,96 @@ const figures = [
 const cases: Case[] = [
   {
     title: 'Cliver',
+    role: 'Fondateur & CEO',
+    status: 'En ligne',
     description:
-      'Application Flutter reliant clients et livreurs : authentification, géolocalisation temps réel et messagerie intégrée.',
-    meta: [
-      { key: 'Rôle', value: 'Fondateur & CEO' },
-      { key: 'Stack', value: 'Flutter · Supabase' },
-      { key: 'Temps réel', value: 'Géoloc · Chat' },
-      { key: 'Statut', value: 'En ligne' },
+      "Plateforme de livraison qui met en relation directe clients et livreurs. J'ai porté le produit de l'idée à la mise en ligne : conception, développement de l'application et suivi technique.",
+    points: [
+      'Authentification et gestion des comptes',
+      'Géolocalisation des livreurs en temps réel',
+      'Messagerie intégrée client ↔ livreur',
     ],
+    tags: ['Flutter', 'Dart', 'Supabase'],
+    tone: 'dark',
     link: 'https://yocliver.com',
   },
   {
     title: 'ERP / CRM',
+    role: 'Développeur — stage',
+    status: 'Livré',
     description:
-      "Système de gestion interne mis en place durant mon stage : suivi des flux, gestion client et tableaux de bord.",
-    meta: [
-      { key: 'Rôle', value: 'Développeur' },
-      { key: 'Stack', value: 'React · Node.js' },
-      { key: 'Contexte', value: 'Stage' },
-      { key: 'Statut', value: 'Livré' },
+      "Système de gestion interne mis en place durant mon stage. L'outil centralise le suivi des flux et la relation client, jusque-là éclatés dans plusieurs fichiers.",
+    points: [
+      'Suivi des flux internes et des stocks',
+      'Fiches client et historique des échanges',
+      'Tableaux de bord de synthèse',
     ],
+    tags: ['React', 'Node.js', 'PostgreSQL'],
+    tone: 'light',
   },
   {
     title: 'Kira Assistances',
+    role: 'Conception & développement',
+    status: 'En cours',
     description:
-      "Assistant personnel propulsé par l'IA : compréhension du langage naturel et automatisation des tâches du quotidien.",
-    meta: [
-      { key: 'Rôle', value: 'Conception & dev' },
-      { key: 'Stack', value: 'Python · NLP' },
-      { key: 'Domaine', value: 'Assistant IA' },
-      { key: 'Statut', value: 'En cours' },
+      "Assistant personnel propulsé par l'IA. Le projet explore la compréhension du langage naturel appliquée à l'automatisation des tâches quotidiennes.",
+    points: [
+      'Compréhension des demandes en langage naturel',
+      'Automatisation de tâches récurrentes',
+      'Modèles entraînés sur données personnelles',
     ],
+    tags: ['Python', 'NLP', 'Machine Learning'],
+    tone: 'dark',
+  },
+  {
+    title: 'Nayjel',
+    role: 'Site client — vidéaste',
+    status: 'En ligne',
+    description:
+      "Portfolio d'un vidéaste basé à Lomé : clips, publicité, documentaire, mariage et prises de vue par drone. Galerie de réalisations, présentation du processus et prise de contact.",
+    tags: ['Portfolio', 'Vidéo', 'Vercel'],
+    tone: 'light',
+    link: 'https://nayjel.vercel.app',
+  },
+  {
+    title: 'Carverse',
+    role: 'Site client — automobile',
+    status: 'En ligne',
+    description:
+      "Concessionnaire automobile avec showroom 3D interactif : les véhicules se font pivoter et explorer directement dans la page. Services après-vente, financement et livraison.",
+    tags: ['3D interactif', 'Showroom', 'Vercel'],
+    tone: 'dark',
+    link: 'https://carverse-zeta.vercel.app',
+  },
+  {
+    title: 'Mia Darling',
+    role: 'Site client — communauté',
+    status: 'En ligne',
+    description:
+      "Plateforme de témoignages anonymes et d'entraide. Publication sans identité, fil de confessions et compteurs d'activité de la communauté.",
+    tags: ['Communauté', 'Publication anonyme'],
+    tone: 'light',
+    link: 'https://miadarlingsp.com',
+  },
+  {
+    title: 'Coolskin',
+    role: 'Site client',
+    status: 'En ligne',
+    description:
+      "Site vitrine réalisé et mis en ligne pour un client : conception de l'interface, intégration responsive et déploiement.",
+    tags: ['Vitrine', 'Responsive', 'Vercel'],
+    tone: 'dark',
+    link: 'https://coolskin.vercel.app',
+  },
+  {
+    title: 'Aprocom',
+    role: 'Site client — APROCOM-Togo',
+    status: 'En ligne',
+    description:
+      "Site institutionnel réalisé pour APROCOM-Togo : conception de l'interface, intégration responsive et mise en ligne.",
+    tags: ['Institutionnel', 'Responsive', 'Vercel'],
+    tone: 'light',
+    link: 'https://aprocom.vercel.app',
   },
 ]
 
@@ -173,6 +236,9 @@ function useReveal<T extends HTMLElement>(threshold = 0.12) {
   return { ref, cls: `reveal${shown ? ' is-in' : ''}` }
 }
 
+/** Bandes sur fond clair : la pagination doit s'y inverser. */
+const lightSections = new Set(['open', 'intro', 'services'])
+
 const sections = [
   { id: 'open', label: 'ouverture' },
   { id: 'intro', label: 'intro' },
@@ -199,12 +265,6 @@ function Marker({ n, label, accent }: { n: string; label: string; accent?: boole
 function App() {
   return (
     <div className="shell">
-      <div className="atmos" aria-hidden="true">
-        <div className="blob blob-a" />
-        <div className="blob blob-b" />
-        <div className="blob blob-c" />
-        <div className="blob blob-d" />
-      </div>
       <div className="grain" aria-hidden="true" />
       <Nav />
       <Pager />
@@ -225,38 +285,34 @@ function App() {
   )
 }
 
-/** La nav s'assombrit en quittant la bande claire d'ouverture. */
+/** Au sommet : texte sombre sur la bande claire, barre transparente.
+ *  Dès qu'on défile : barre floutée sombre et texte clair — lisible
+ *  aussi bien sur la photo du header que sur les bandes claires. */
 function Nav() {
-  const [onLight, setOnLight] = useState(true)
-  const [stuck, setStuck] = useState(false)
+  const [atTop, setAtTop] = useState(true)
 
   useEffect(() => {
-    const onScroll = () => {
-      const open = document.getElementById('open')
-      const limit = open ? open.offsetHeight - 70 : window.innerHeight
-      setOnLight(window.scrollY < limit)
-      setStuck(window.scrollY > 40)
-    }
+    const onScroll = () => setAtTop(window.scrollY < 40)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-    }
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   return (
-    <nav className={`nav${onLight ? ' on-light' : ''}${stuck && !onLight ? ' is-stuck' : ''}`}>
+    <nav className={`nav${atTop ? ' on-light' : ' is-stuck'}`}>
       <a href="#open" className="nav-logo">
         <span className="dot" />
         <span>Skwiz</span>
       </a>
       <ul className="nav-links">
-        <li><a href="#work">projets</a></li>
-        <li><a href="#stack">stack</a></li>
-        <li><a href="#services">services</a></li>
-        <li><a href="#contact">contact</a></li>
+        {sections.slice(2).map((section, i) => (
+          <li key={section.id}>
+            <a href={`#${section.id}`}>
+              <i aria-hidden="true">{pad2(i + 1)}</i>
+              {section.label}
+            </a>
+          </li>
+        ))}
       </ul>
     </nav>
   )
@@ -284,7 +340,10 @@ function Pager() {
   }, [])
 
   return (
-    <nav className={`pager${active === 'open' ? ' on-light' : ''}`} aria-label="Sections">
+    <nav
+      className={`pager${lightSections.has(active) ? ' on-light' : ''}`}
+      aria-label="Sections"
+    >
       {sections.map((section) => (
         <a
           key={section.id}
@@ -300,33 +359,64 @@ function Pager() {
   )
 }
 
+/** Champ dépoli : réservé à une seule bande, pas au site entier. */
+function Atmos() {
+  return (
+    <div className="atmos" aria-hidden="true">
+      <div className="blob blob-a" />
+      <div className="blob blob-b" />
+      <div className="blob blob-c" />
+      <div className="blob blob-d" />
+      <div className="blob blob-e" />
+    </div>
+  )
+}
+
 /* ── 01 · Ouverture ───────────────────────────────────────── */
 
 function Open() {
   return (
     <section className="open" id="open">
-      <span className="ghost open-ghost" aria-hidden="true">portfolio</span>
+      {/* bande grise du bas, sur laquelle la photo se poursuit */}
+      <span className="open-band" aria-hidden="true" />
 
-      <div className="open-photo">
+      <div className="open-media">
         <img src={profilePhoto} alt="Portrait d'OKOUMASSOU Kodjo K." />
       </div>
 
-      <div className="open-inner">
-        <p className="open-eyebrow">Kodjo Katchékpèlè</p>
-        <h1 className="open-name">
-          <span>Okoumassou<em className="dot">.</em></span>
-        </h1>
+      {/* légende technique en deux colonnes serrées */}
+      <div className="open-caption">
+        <span className="open-caption-label">Skwiz</span>
+        <p>
+          Étudiant en Licence 3 Intelligence Artificielle &amp; Big Data.
+          Fondateur et CEO de Cliver.
+        </p>
+        <p>
+          Modèles de prédiction, pipelines de données et applications
+          mobiles menées jusqu'à la mise en ligne.
+        </p>
+      </div>
 
-        <div className="open-foot">
-          <div className="open-social">
-            <a href={profile.github} target="_blank" rel="noreferrer">↳ GitHub</a>
-            <a href={profile.linkedin} target="_blank" rel="noreferrer">↳ LinkedIn</a>
-            <a href={`mailto:${profile.email}`}>↳ Email</a>
-          </div>
-          <p className="open-role">
-            <span>Étudiant IA &amp; Big Data</span>
-            <span>Développeur Flutter</span>
-          </p>
+      {/* texte vertical, dans la bande claire à droite de la photo */}
+      <span className="open-edge" aria-hidden="true">
+        Okoumassou Kodjo K.
+        <i>IA &amp; Big Data</i>
+        <i>Portfolio 2026</i>
+      </span>
+
+      <h1 className="open-word">
+        <span>skwiz<em>.</em></span>
+      </h1>
+
+      <div className="open-foot">
+        <span className="open-index" aria-hidden="true">001</span>
+        <a className="open-next" href="#intro" aria-label="Descendre">
+          <span aria-hidden="true">→</span>
+        </a>
+        <div className="open-social">
+          <a href={profile.github} target="_blank" rel="noreferrer">GitHub</a>
+          <a href={profile.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+          <a href={`mailto:${profile.email}`}>Email</a>
         </div>
       </div>
     </section>
@@ -357,17 +447,18 @@ function Statement() {
   const { ref, cls } = useReveal<HTMLDivElement>()
 
   return (
-    <section className="band band-pad" id="intro">
+    <section className="band band-pad band-light" id="intro">
       <div className={cls} ref={ref}>
         <Marker n="01" label="intro" />
         <div className="tagged">
           <p className="tagged-label">Ce que je cherche à faire</p>
           <h2 className="intro-statement">
-            Je construis des <em>modèles qui prédisent</em> et des{' '}
-            <em>applications qu'on utilise vraiment</em>.
+            <span className="star" aria-hidden="true">✳</span> Je construis des{' '}
+            <span className="inline-pill" aria-hidden="true" /> modèles qui prédisent{' '}
+            <span className="said-soft">et des applications que l'on utilise</span>{' '}
+            <span className="inline-pill" aria-hidden="true" /> vraiment.
           </h2>
         </div>
-        <span className="rule" aria-hidden="true" />
 
         <div className="intro-foot">
           <p className="intro-note">
@@ -406,51 +497,79 @@ function Figures() {
 /* ── 05 · Projets ─────────────────────────────────────────── */
 
 function Work() {
+  const { ref, cls } = useReveal<HTMLDivElement>(0.08)
+
   return (
-    <section className="band" id="work">
-      <div className="band-pad" style={{ paddingBottom: 0 }}>
-        <Marker n="02" label="projets" />
+    <section className="band has-atmos" id="work">
+      <Atmos />
+      <div className="band-pad">
+        <div className="work-head">
+          <div>
+            <Marker n="02" label="projets" />
+            <h2 className="work-title">
+              Ce que j'ai <span className="glyph" aria-hidden="true">⊗</span> construit
+            </h2>
+          </div>
+          <div className="work-aside">
+            <p>Trois projets menés de bout en bout, du prototype à la mise en ligne.</p>
+            <a className="btn btn-line" href={profile.github} target="_blank" rel="noreferrer">
+              Tout le code <span className="arrow" aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <div className={`cards ${cls}`} ref={ref}>
+          {cases.map((item, i) => (
+            <CaseCard key={item.title} item={item} index={i} />
+          ))}
+        </div>
       </div>
-      {cases.map((item, i) => (
-        <CaseRow key={item.title} item={item} index={i} />
-      ))}
     </section>
   )
 }
 
-function CaseRow({ item, index }: { item: Case; index: number }) {
-  const { ref, cls } = useReveal<HTMLDivElement>()
-  const Tag = item.link ? 'a' : 'div'
-
+function CaseCard({ item, index }: { item: Case; index: number }) {
   return (
-    <Tag
-      className={`case ${cls}`}
-      ref={ref as never}
-      {...(item.link ? { href: item.link, target: '_blank', rel: 'noreferrer' } : {})}
-    >
-      <div className="case-num" aria-hidden="true">{pad2(index + 1)}</div>
+    <article className="card-wrap">
+      <div className={`card is-${item.tone}`}>
+        <div className="card-top">
+          <span className="pill">{item.status}</span>
+          <span className="card-num">{pad2(index + 1)}</span>
+        </div>
 
-      <div>
-        <h3 className="case-name">
-          {item.title}<span className="dot">.</span>
-        </h3>
-        <p className="case-desc">{item.description}</p>
-        <span className={`case-go${item.link ? '' : ' is-idle'}`}>
-          {item.link ? 'Visiter le site' : 'Étude de cas à venir'}
-          <span aria-hidden="true">{item.link ? '↗' : '···'}</span>
-        </span>
+        <h3 className="card-name">{item.title}</h3>
+        <p className="card-role">{item.role}</p>
+        <p className="card-desc">{item.description}</p>
+
+        {item.points && (
+          <ul className="card-points">
+            {item.points.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
+        )}
+
+        <div className="card-tags">
+          {item.tags.map((tag) => (
+            <span key={tag}>{tag}</span>
+          ))}
+        </div>
       </div>
 
-      <ul className="case-meta">
-        {item.meta.map((row, i) => (
-          <li key={row.key}>
-            <span className="case-meta-idx">{pad2(i + 1)}</span>
-            <span className="case-meta-key">{row.key}</span>
-            <span className="case-meta-val">{row.value}</span>
-          </li>
-        ))}
-      </ul>
-    </Tag>
+      {item.link ? (
+        <a
+          className="card-go"
+          href={item.link}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`Ouvrir ${item.title}`}
+        >
+          <span aria-hidden="true">↗</span>
+        </a>
+      ) : (
+        <span className="card-go is-idle" aria-hidden="true">···</span>
+      )}
+    </article>
   )
 }
 
@@ -543,7 +662,7 @@ function GitHubActivity() {
 
 function Services() {
   return (
-    <section className="band" id="services">
+    <section className="band band-light" id="services">
       <div className="band-pad" style={{ paddingBottom: 0 }}>
         <Marker n="04" label="services" />
       </div>
@@ -641,7 +760,7 @@ function Contact() {
 function Foot() {
   return (
     <footer className="foot">
-      <div className="foot-word">okoumassou<span className="dot">.</span></div>
+      <div className="foot-word">skwiz<span className="dot">.</span></div>
       <div className="foot-bar">
         <span>© 2026 {profile.name}</span>
         <ul className="foot-links">

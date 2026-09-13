@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Navbar Liquid Glass — Skwiz</title>
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════════════════════════
+       NAVBAR LIQUID GLASS
+       Tout ce qui suit jusqu'au commentaire « FIN NAVBAR » est
+       autonome : style, balisage et script. Rien d'externe.
+       ══════════════════════════════════════════════════════════ -->
+
+  <style>
+    :root {
+      --lg-bg: #f0f0f0;
+      --lg-ink: #000000;
+      --lg-accent: #ff4500;
+      --lg-ease: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .lg-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      /* le conteneur ne bouge pas : c'est l'intérieur qui se
+         transforme, ce qui évite tout recalcul de mise en page */
+      padding: 0;
+      transition: padding 0.4s var(--lg-ease);
+    }
+
+    .lg-nav__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      margin: 0 auto;
+      max-width: none;
+      padding: 1.25rem clamp(1.25rem, 4vw, 3rem);
+
+      /* ── État haut de page : plat et transparent ── */
+      border: 1px solid transparent;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+
+      transition:
+        max-width 0.4s var(--lg-ease),
+        padding 0.4s var(--lg-ease),
+        border-radius 0.4s var(--lg-ease),
+        border-color 0.4s var(--lg-ease),
+        background-color 0.4s var(--lg-ease),
+        box-shadow 0.4s var(--lg-ease),
+        backdrop-filter 0.4s var(--lg-ease);
+    }
+
+    /* ── État défilé : pilule flottante en verre liquide ── */
+    .lg-nav.is-scrolled {
+      padding: 0.85rem clamp(0.75rem, 3vw, 1.5rem);
+    }
+
+    .lg-nav.is-scrolled .lg-nav__inner {
+      max-width: 1080px;
+      padding: 0.75rem 1.5rem;
+      border-radius: 50px;
+      border-color: rgba(0, 0, 0, 0.1);
+      background: rgba(240, 240, 240, 0.6);
+      /* la saturation est ce qui donne la densité « liquide » :
+         le flou seul rend le verre terne */
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.08),
+        0 2px 8px rgba(0, 0, 0, 0.04),
+        /* liseré clair en haut : l'arête éclairée du verre */
+        inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    }
+
+    /* Repli si le navigateur ne sait pas flouter l'arrière-plan :
+       on opacifie, sinon la barre devient illisible. */
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      .lg-nav.is-scrolled .lg-nav__inner {
+        background: rgba(240, 240, 240, 0.94);
+      }
+    }
+
+    /* ── Logo ── */
+    .lg-nav__logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      flex: none;
+      font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--lg-ink);
+      text-decoration: none;
+    }
+
+    .lg-nav__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--lg-accent);
+      flex: none;
+    }
+
+    /* ── Liens numérotés ── */
+    .lg-nav__links {
+      display: flex;
+      align-items: center;
+      gap: clamp(1rem, 2.5vw, 2rem);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .lg-nav__links a {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.4rem;
+      font-family: ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--lg-ink);
+      text-decoration: none;
+      transition: color 0.3s var(--lg-ease);
+    }
+
+    /* le numéro porte l'orange, le libellé reste noir */
+    .lg-nav__links a .num {
+      color: var(--lg-accent);
+    }
+
+    .lg-nav__links a:hover {
+      color: var(--lg-accent);
+    }
+
+    /* ── Indicateur de section active ──
+       La puce occupe sa place en permanence et ne fait que changer
+       d'opacité : sans ça, les liens sautent à chaque changement
+       de section. */
+    .lg-nav__links a::before {
+      content: '•';
+      display: inline-block;
+      width: 0.5em;
+      margin-right: 0.1em;
+      color: var(--lg-accent);
+      opacity: 0;
+      transform: translateX(-2px);
+      transition: opacity 0.3s var(--lg-ease), transform 0.3s var(--lg-ease);
+    }
+
+    .lg-nav__links a.is-active::before {
+      opacity: 1;
+      transform: none;
+    }
+
+    .lg-nav__links a.is-active {
+      font-weight: 500;
+    }
+
+    .lg-nav__links a:focus-visible {
+      outline: 2px solid var(--lg-accent);
+      outline-offset: 4px;
+      border-radius: 2px;
+    }
+
+    @media (max-width: 640px) {
+      .lg-nav__links {
+        gap: 0.8rem;
+      }
+
+      .lg-nav__links a {
+        font-size: 11px;
+        letter-spacing: 0.06em;
+      }
+
+      /* sous 640px, les numéros font déborder la barre */
+      .lg-nav__links a .num {
+        display: none;
+      }
+    }
+
+    /* Sous 480px, quatre libellés plus le logo ne tiennent pas dans
+       la pilule : le logo se réduit à sa pastille. */
+    @media (max-width: 480px) {
+      .lg-nav.is-scrolled .lg-nav__inner {
+        padding: 0.7rem 1rem;
+      }
+
+      .lg-nav__inner {
+        gap: 0.8rem;
+      }
+
+      .lg-nav__name {
+        display: none;
+      }
+
+      .lg-nav__links {
+        gap: 0.65rem;
+      }
+
+      .lg-nav__links a {
+        font-size: 10px;
+        letter-spacing: 0.04em;
+      }
+
+      .lg-nav__links a::before {
+        width: 0.4em;
+        margin-right: 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .lg-nav,
+      .lg-nav__inner,
+      .lg-nav__links a,
+      .lg-nav__links a::before {
+        transition-duration: 0.01ms;
+      }
+    }
+  </style>
+
+  <nav class="lg-nav" id="lgNav" aria-label="Navigation principale">
+    <div class="lg-nav__inner">
+      <a class="lg-nav__logo" href="#top">
+        <span class="lg-nav__dot" aria-hidden="true"></span>
+        <span class="lg-nav__name">Skwiz</span>
+      </a>
+
+      <ul class="lg-nav__links">
+        <li><a href="#projets"><span class="num">01</span>projets</a></li>
+        <li><a href="#stack"><span class="num">02</span>stack</a></li>
+        <li><a href="#services"><span class="num">03</span>services</a></li>
+        <li><a href="#contact"><span class="num">04</span>contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <script>
+    (function () {
+      var nav = document.getElementById('lgNav');
+      var links = Array.prototype.slice.call(nav.querySelectorAll('.lg-nav__links a'));
+
+      /* ── Bascule plat ↔ pilule ──
+         rAF pour ne pas recalculer à chaque événement de défilement. */
+      var ticking = false;
+
+      function applyScrollState() {
+        nav.classList.toggle('is-scrolled', window.scrollY > 24);
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', function () {
+        if (!ticking) {
+          ticking = true;
+          window.requestAnimationFrame(applyScrollState);
+        }
+      }, { passive: true });
+
+      applyScrollState();
+
+      /* ── Section active ──
+         La marge haute/basse réduit la zone de détection au milieu
+         de l'écran : la section active est celle qu'on regarde,
+         pas celle qui affleure le bord. */
+      function setActive(id) {
+        links.forEach(function (a) {
+          var on = a.getAttribute('href') === '#' + id;
+          a.classList.toggle('is-active', on);
+          if (on) { a.setAttribute('aria-current', 'true'); }
+          else { a.removeAttribute('aria-current'); }
+        });
+      }
+
+      /* La navbar se place en tête du document : au moment où ce
+         script s'exécute, les sections visées n'existent pas encore.
+         On attend donc que le document soit analysé. */
+      function observeSections() {
+        var targets = links
+          .map(function (a) { return document.querySelector(a.getAttribute('href')); })
+          .filter(Boolean);
+
+        if (!targets.length || !('IntersectionObserver' in window)) { return; }
+
+        var observer = new IntersectionObserver(function (entries) {
+          var visible = entries
+            .filter(function (e) { return e.isIntersecting; })
+            .sort(function (a, b) { return b.intersectionRatio - a.intersectionRatio; })[0];
+          if (visible) { setActive(visible.target.id); }
+        }, { rootMargin: '-45% 0px -45% 0px', threshold: [0, 0.25, 0.5, 1] });
+
+        targets.forEach(function (el) { observer.observe(el); });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', observeSections);
+      } else {
+        observeSections();
+      }
+    })();
+  </script>
+
+  <!-- ══════════════════════════════════════════════════════════
+       FIN NAVBAR — tout ce qui suit n'est qu'une page de
+       démonstration pour voir le comportement. À supprimer.
+       ══════════════════════════════════════════════════════════ -->
+
+  <style>
+    body {
+      margin: 0;
+      background: #f0f0f0;
+      color: #000;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    }
+
+    .demo {
+      min-height: 100vh;
+      display: grid;
+      place-content: center;
+      gap: 0.75rem;
+      padding: 6rem 2rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .demo h2 {
+      margin: 0;
+      font-size: clamp(2rem, 7vw, 4.5rem);
+      letter-spacing: -0.04em;
+      text-transform: lowercase;
+    }
+
+    .demo p {
+      margin: 0;
+      font-family: ui-monospace, monospace;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #6b6b6b;
+    }
+
+    .demo:nth-child(even) {
+      background: #e6e6e6;
+    }
+  </style>
+
+  <main id="top">
+    <section class="demo" id="projets">
+      <p>01 — défilez pour voir la pilule apparaître</p>
+      <h2>projets</h2>
+    </section>
+    <section class="demo" id="stack">
+      <p>02</p>
+      <h2>stack</h2>
+    </section>
+    <section class="demo" id="services">
+      <p>03</p>
+      <h2>services</h2>
+    </section>
+    <section class="demo" id="contact">
+      <p>04</p>
+      <h2>contact</h2>
+    </section>
+  </main>
+
+</body>
+
+</html>

@@ -17,15 +17,19 @@
   --paper: #ffffff;
   --bone: #ececea;
   --bone-2: #e2e2df;
+  --sheet: #f4f4f2;
+
+  /* l'orange des réfs est un dégradé, pas un aplat */
+  --orange-grad: linear-gradient(100deg, #a82b00 0%, #ff5a00 46%, #ff9a4d 100%);
 
   /* ─ Textes ─ */
-  --mute: #8a8a8a;
-  --mute-2: #5e5e5e;
+  --mute: #a6a6a6;
+  --mute-2: #828282;
   --on-light: #0a0a0a;
   --on-light-mute: #6b6b6b;
 
   /* ─ Filets ─ */
-  --line: rgba(255, 255, 255, 0.09);
+  --line: rgba(255, 255, 255, 0.12);
   --line-2: rgba(255, 255, 255, 0.2);
   --line-dark: rgba(10, 10, 10, 0.14);
 
@@ -37,6 +41,9 @@
   /* ─ Trame ─ */
   --pad: clamp(1.25rem, 4.5vw, 4.5rem);
   --rail: 4.5rem;
+  /* largeur des blocs flottants (nav, pied de page) */
+  --shell-w: 1400px;
+  --inset: clamp(0.65rem, 1.4vw, 1.1rem);
 
   /* ─ Mouvement ─ */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
