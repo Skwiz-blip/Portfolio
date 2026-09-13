@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { GitHubCalendar } from 'react-github-calendar'
 import profilePhoto from './IMG-20240605-WA0051.jpg'
 import './App.css'
+import BlobBackground from './BlobBackground'
 
 /* ── Données ──────────────────────────────────────────────── */
 
@@ -377,6 +378,7 @@ function Atmos() {
 function Open() {
   return (
     <section className="open" id="open">
+      <BlobBackground />
       {/* bande grise du bas, sur laquelle la photo se poursuit */}
       <span className="open-band" aria-hidden="true" />
 
